@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A simple, user-friendly Expense Tracker to record, manage, monitor, and filter your income and expenses." />
+  <title>Expense Tracker — Manage Your Finances</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ─── Header ─── -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">💰</span>
+        <h1>Expense Tracker</h1>
+      </div>
+      <p class="tagline">Take control of your finances</p>
+    </div>
+  </header>
+
+  <main id="app-main">
+
+    <!-- ─── Summary Cards ─── -->
+    <section id="summary-section" aria-label="Financial Summary">
+      <div class="summary-card balance-card" id="balance-card">
+        <span class="summary-label">Current Balance</span>
+        <span class="summary-value" id="balance-value">₹0.00</span>
+      </div>
+      <div class="summary-card income-card" id="income-card">
+        <span class="summary-icon">📈</span>
+        <div>
+          <span class="summary-label">Total Income</span>
+          <span class="summary-value" id="income-value">₹0.00</span>
+        </div>
+      </div>
+      <div class="summary-card expense-card" id="expense-card">
+        <span class="summary-icon">📉</span>
+        <div>
+          <span class="summary-label">Total Expenses</span>
+          <span class="summary-value" id="expense-value">₹0.00</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Two-column layout ─── -->
+    <div class="content-grid">
+
+      <!-- LEFT: Form + Bonus -->
+      <div class="content-left">
+
+        <!-- Transaction Form -->
+        <section id="form-section" aria-label="Add or Edit Transaction">
+          <h2 id="form-title">Add Transaction</h2>
+          <form id="transaction-form" novalidate>
+            <input type="hidden" id="edit-id" value="" />
+
+            <div class="form-group">
+              <label for="tx-type">Type</label>
+              <div class="radio-group" id="tx-type">
+                <label class="radio-pill income-pill">
+                  <input type="radio" name="tx-type" value="income" checked />
+                  <span>Income</span>
+                </label>
+                <label class="radio-pill expense-pill">
+                  <input type="radio" name="tx-type" value="expense" />
+                  <span>Expense</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="tx-amount">Amount (₹)</label>
+              <input type="number" id="tx-amount" placeholder="e.g. 5000" min="0.01" step="0.01" required />
+              <span class="error-msg" id="err-amount"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="tx-category">Category</label>
+              <select id="tx-category" required>
+                <option value="">— Select Category —</option>
+                <option value="Salary">Salary</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Health">Health</option>
+                <option value="Education">Education</option>
+                <option value="Other">Other</option>
+              </select>
+              <span class="error-msg" id="err-category"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="tx-date">Date</label>
+              <input type="date" id="tx-date" required />
+              <span class="error-msg" id="err-date"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="tx-desc">Description</label>
+              <input type="text" id="tx-desc" placeholder="e.g. Monthly salary" maxlength="100" required />
+              <span class="error-msg" id="err-desc"></span>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="btn-submit">
+                <span class="btn-icon">＋</span> Add Transaction
+              </button>
+              <button type="button" class="btn btn-secondary" id="btn-cancel" style="display:none;">Cancel</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Bonus: Monthly Summary -->
+        <section id="monthly-section" aria-label="Monthly Expense Summary">
+          <h2>Monthly Expense Summary</h2>
+          <div class="month-picker">
+            <label for="month-select">Select Month</label>
+            <input type="month" id="month-select" />
+          </div>
+          <div class="monthly-result" id="monthly-result">
+            <span class="monthly-label" id="monthly-label">—</span>
+            <span class="monthly-total" id="monthly-total">₹0.00</span>
+          </div>
+        </section>
+
+        <!-- Bonus: Category Chart -->
+        <section id="chart-section" aria-label="Category-wise Expense Chart">
+          <h2>Expense by Category</h2>
+          <div id="chart-container"></div>
+          <p class="chart-empty" id="chart-empty">No expense data yet.</p>
+        </section>
+      </div>
+
+      <!-- RIGHT: Filters + List -->
+      <div class="content-right">
+
+        <!-- Filters -->
+        <section id="filter-section" aria-label="Filter Transactions">
+          <h2>Transactions</h2>
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label for="filter-type">Type</label>
+              <select id="filter-type">
+                <option value="all">All</option>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label for="filter-category">Category</label>
+              <select id="filter-category">
+                <option value="all">All Categories</option>
+                <option value="Salary">Salary</option>
+                <option value="Food">Food</option>
+                <option value="Transport">Transport</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Health">Health</option>
+                <option value="Education">Education</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Transaction List -->
+        <section id="list-section" aria-label="Transaction List">
+          <ul id="transaction-list"></ul>
+          <p class="list-empty" id="list-empty">No transactions found. Add one above!</p>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Delete Confirm Modal -->
+  <div class="modal-overlay" id="delete-modal">
+    <div class="modal-box">
+      <h3>Delete Transaction</h3>
+      <p>Are you sure you want to delete this transaction? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" id="btn-confirm-delete">Delete</button>
+        <button class="btn btn-secondary" id="btn-cancel-delete">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <footer id="app-footer">
+    <p>&copy; 2026 Expense Tracker. Built with ❤️</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
